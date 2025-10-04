@@ -11,16 +11,18 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
         body {
-            min-height: 100vh;
-            height: 100vh;
             display: flex;
             flex-direction: column;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
             position: relative;
             transition: background 0.8s ease;
-            padding: 0.5rem;
         }
 
         /* Theme backgrounds */
@@ -90,9 +92,8 @@
             width: 100%;
             max-width: 1000px;
             margin: 0 auto;
-            padding: 1rem 0.5rem;
+            padding: 1rem;
             overflow-y: auto;
-            overflow-x: hidden;
         }
 
         .theme-selector {
@@ -312,7 +313,8 @@
         /* Footer */
         footer {
             flex-shrink: 0;
-            padding: 0.8rem;
+            width: 100%;
+            padding: 1rem;
             text-align: center;
             color: rgba(255, 255, 255, 0.8);
             font-size: clamp(0.7rem, 2vw, 0.95rem);
@@ -338,12 +340,8 @@
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
-            body {
-                padding: 0.5rem;
-            }
-
             .container {
-                padding: 0.5rem 0.25rem;
+                padding: 0.8rem;
             }
 
             .clock-wrapper {
@@ -365,8 +363,8 @@
         }
 
         @media (max-width: 480px) {
-            body {
-                padding: 0.3rem;
+            .container {
+                padding: 0.5rem;
             }
 
             .clock-wrapper {
@@ -384,12 +382,15 @@
             }
 
             footer {
-                padding: 0.6rem 0.5rem;
-                font-size: 0.7rem;
+                padding: 0.8rem 0.5rem;
             }
         }
 
         @media (max-width: 380px) {
+            .container {
+                padding: 0.4rem;
+            }
+
             .theme-btn {
                 padding: 0.3rem 0.6rem;
                 font-size: 0.55rem;
@@ -398,6 +399,10 @@
 
             .time-container {
                 gap: 0.2rem;
+            }
+
+            footer {
+                padding: 0.7rem 0.4rem;
             }
         }
 
@@ -416,7 +421,7 @@
         /* Small height devices */
         @media (max-height: 600px) {
             .container {
-                padding: 0.3rem;
+                padding: 0.5rem;
             }
 
             .theme-selector {
@@ -438,12 +443,16 @@
             .timezone {
                 margin-top: 0.5rem;
             }
+
+            footer {
+                padding: 0.6rem;
+            }
         }
 
         /* Landscape mobile */
         @media (max-height: 500px) and (orientation: landscape) {
-            body {
-                padding: 0.3rem;
+            .container {
+                padding: 0.5rem;
             }
 
             .theme-selector {
@@ -471,7 +480,7 @@
             }
 
             footer {
-                padding: 0.4rem;
+                padding: 0.5rem;
                 font-size: 0.65rem;
             }
         }
