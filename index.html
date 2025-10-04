@@ -13,14 +13,14 @@
 
         body {
             min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow-x: hidden;
+            overflow: hidden;
             position: relative;
             transition: background 0.8s ease;
             padding: 0.5rem;
-            padding-bottom: 70px;
         }
 
         /* Theme backgrounds */
@@ -91,6 +91,8 @@
             max-width: 1000px;
             margin: 0 auto;
             padding: 1rem 0.5rem;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .theme-selector {
@@ -309,10 +311,7 @@
 
         /* Footer */
         footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            flex-shrink: 0;
             padding: 0.8rem;
             text-align: center;
             color: rgba(255, 255, 255, 0.8);
@@ -341,7 +340,6 @@
         @media (max-width: 768px) {
             body {
                 padding: 0.5rem;
-                padding-bottom: 60px;
             }
 
             .container {
@@ -369,7 +367,6 @@
         @media (max-width: 480px) {
             body {
                 padding: 0.3rem;
-                padding-bottom: 55px;
             }
 
             .clock-wrapper {
@@ -446,7 +443,7 @@
         /* Landscape mobile */
         @media (max-height: 500px) and (orientation: landscape) {
             body {
-                padding-bottom: 50px;
+                padding: 0.3rem;
             }
 
             .theme-selector {
