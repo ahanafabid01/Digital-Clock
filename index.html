@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Digital Clock</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            position: relative;
+            transition: background 0.8s ease;
+            padding: 1rem;
+        }
+
+        /* Theme backgrounds */
+        body.theme-neon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body.theme-ocean {
+            background: linear-gradient(135deg, #0093E9 0%, #80D0C7 100%);
+        }
+
+        body.theme-sunset {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
+        }
+
+        body.theme-forest {
+            background: linear-gradient(135deg, #134E5E 0%, #71B280 100%);
+        }
+
+        body.theme-midnight {
+            background: linear-gradient(135deg, #000428 0%, #004e92 100%);
+        }
+
+        body.theme-aurora {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        body.theme-fire {
+            background: linear-gradient(135deg, #F37335 0%, #FDC830 100%);
+        }
+
+        body.theme-matrix {
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+        }
+
+        /* Animated background particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.3;
+            animation: float 20s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(100px, -100px) scale(1.2);
+            }
+            66% {
+                transform: translate(-100px, 100px) scale(0.8);
+            }
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 2rem;
+        }
+
+        .theme-selector {
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+            padding: 1rem;
+        }
+
+        .theme-btn {
+            padding: 0.6rem 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .theme-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .clock-wrapper {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 3rem;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3),
+                        inset 0 0 30px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform-style: preserve-3d;
+            animation: breathe 4s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes breathe {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+        }
+
+        .date {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+            font-weight: 300;
+            text-transform: uppercase;
+        }
+
+        .time-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: clamp(0.3rem, 1vw, 0.8rem);
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .time-group {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.2rem, 0.8vw, 0.5rem);
+        }
+
+        .time {
+            font-size: clamp(3rem, 10vw, 7rem);
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5),
+                         0 0 40px rgba(255, 255, 255, 0.3),
+                         0 5px 15px rgba(0, 0, 0, 0.3);
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.05em;
+            position: relative;
+            display: inline-block;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.5),
+                             0 0 40px rgba(255, 255, 255, 0.3),
+                             0 5px 15px rgba(0, 0, 0, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 30px rgba(255, 255, 255, 0.8),
+                             0 0 60px rgba(255, 255, 255, 0.5),
+                             0 5px 25px rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        .separator {
+            opacity: 0;
+            animation: blink 1s infinite;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: clamp(2.5rem, 9vw, 6rem);
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        @keyframes blink {
+            0%, 49% {
+                opacity: 1;
+            }
+            50%, 100% {
+                opacity: 0.3;
+            }
+        }
+
+        .seconds-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-left: clamp(0.5rem, 2vw, 1rem);
+        }
+
+        .seconds {
+            font-size: clamp(1.8rem, 5vw, 3.5rem);
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            line-height: 1;
+        }
+
+        .seconds-label {
+            font-size: clamp(0.6rem, 1.5vw, 0.9rem);
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 0.3rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .period {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+            align-self: flex-start;
+            margin-top: clamp(0.5rem, 1.5vw, 1rem);
+        }
+
+        .timezone {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: clamp(0.85rem, 2vw, 1.1rem);
+            margin-top: 1.5rem;
+            letter-spacing: 3px;
+            font-weight: 300;
+        }
+
+        /* Decorative elements */
+        .corner {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .corner-tl {
+            top: 15px;
+            left: 15px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-tr {
+            top: 15px;
+            right: 15px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-bl {
+            bottom: 15px;
+            left: 15px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-br {
+            bottom: 15px;
+            right: 15px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* Footer */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.2rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: clamp(0.85rem, 2vw, 1rem);
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            letter-spacing: 1px;
+        }
+
+        footer a {
+            color: rgba(255, 255, 255, 0.95);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        footer a:hover {
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .clock-wrapper {
+                padding: 2rem 1.5rem;
+                border-radius: 20px;
+            }
+
+            .theme-selector {
+                gap: 0.5rem;
+                padding: 0.5rem;
+            }
+
+            .theme-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.75rem;
+            }
+
+            .corner {
+                width: 30px;
+                height: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .clock-wrapper {
+                padding: 1.5rem 1rem;
+            }
+
+            .time-container {
+                gap: 0.2rem;
+            }
+
+            .corner {
+                width: 25px;
+                height: 25px;
+            }
+
+            footer {
+                padding: 1rem 0.5rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .container {
+                margin-bottom: 1rem;
+            }
+
+            .theme-selector {
+                margin-bottom: 1rem;
+            }
+
+            footer {
+                position: relative;
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="theme-neon">
+    <div class="container">
+        <div class="theme-selector">
+            <button class="theme-btn active" data-theme="neon">Neon</button>
+            <button class="theme-btn" data-theme="ocean">Ocean</button>
+            <button class="theme-btn" data-theme="sunset">Sunset</button>
+            <button class="theme-btn" data-theme="forest">Forest</button>
+            <button class="theme-btn" data-theme="midnight">Midnight</button>
+            <button class="theme-btn" data-theme="aurora">Aurora</button>
+            <button class="theme-btn" data-theme="fire">Fire</button>
+            <button class="theme-btn" data-theme="matrix">Matrix</button>
+        </div>
+
+        <div class="clock-wrapper">
+            <div class="corner corner-tl"></div>
+            <div class="corner corner-tr"></div>
+            <div class="corner corner-bl"></div>
+            <div class="corner corner-br"></div>
+            
+            <div class="date" id="date"></div>
+            <div class="time-container">
+                <div class="time-group">
+                    <span class="time" id="hours">00</span>
+                    <span class="separator">:</span>
+                    <span class="time" id="minutes">00</span>
+                </div>
+                <div class="seconds-container">
+                    <span class="seconds" id="seconds">00</span>
+                    <span class="seconds-label">SEC</span>
+                </div>
+                <span class="period" id="period">AM</span>
+            </div>
+            <div class="timezone" id="timezone"></div>
+        </div>
+    </div>
+
+    <footer>
+        Made with ❤️ by <a href="#" target="_blank">Ahanaf Abid Sazid</a>
+    </footer>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const body = document.body;
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = Math.random() * 100 + 50 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.background = `rgba(255, 255, 255, ${Math.random() * 0.2})`;
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+                body.appendChild(particle);
+            }
+        }
+
+        createParticles();
+
+        // Theme switching
+        const themeButtons = document.querySelectorAll('.theme-btn');
+        const body = document.body;
+
+        themeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const theme = btn.dataset.theme;
+                
+                // Remove all theme classes
+                body.className = '';
+                body.classList.add(`theme-${theme}`);
+                
+                // Update active button
+                themeButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Save theme preference
+                localStorage.setItem('clockTheme', theme);
+            });
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('clockTheme');
+        if (savedTheme) {
+            body.className = `theme-${savedTheme}`;
+            themeButtons.forEach(btn => {
+                if (btn.dataset.theme === savedTheme) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        function updateClock() {
+            const now = new Date();
+            
+            // Get time components
+            let hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            
+            // Determine AM/PM
+            const period = hours >= 12 ? 'PM' : 'AM';
+            
+            // Convert to 12-hour format
+            hours = hours % 12;
+            hours = hours ? hours : 12; // 0 should be 12
+            
+            // Format with leading zeros
+            const formattedHours = String(hours).padStart(2, '0');
+            const formattedMinutes = String(minutes).padStart(2, '0');
+            const formattedSeconds = String(seconds).padStart(2, '0');
+            
+            // Update time display
+            document.getElementById('hours').textContent = formattedHours;
+            document.getElementById('minutes').textContent = formattedMinutes;
+            document.getElementById('seconds').textContent = formattedSeconds;
+            document.getElementById('period').textContent = period;
+            
+            // Update date
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date').textContent = now.toLocaleDateString('en-US', options);
+            
+            // Update timezone
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            document.getElementById('timezone').textContent = timezone.replace(/_/g, ' ');
+        }
+
+        // Update immediately and then every second
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>
